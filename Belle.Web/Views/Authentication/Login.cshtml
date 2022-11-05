@@ -1,0 +1,96 @@
+﻿<!--Body Content-->
+<div id="page-content">
+    <!--Page Title-->
+    <div class="page section-header text-center">
+        <div class="page-title">
+            <div class="wrapper">
+                <h1 class="page-width">Login</h1>
+                <div id="global-login-error" class="alert alert-danger d-none">Global error</div>
+            </div>
+        </div>
+    </div>
+    <!--End Page Title-->
+        
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-6 main-col offset-md-3">
+                <div class="mb-4">
+                    <div class="row">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-group">
+                            <label for="CustomerEmail">Login</label>
+                            <input type="text" id="CustomerEmail" class="" autofocus="">
+                            <div id="login-error-container" class="alert alert-danger d-none">Login error</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-group">
+                            <label for="CustomerPassword">Password</label>
+                            <input type="password" id="CustomerPassword" class="">  
+                            <div id="password-error-container" class="alert alert-danger d-none">Password error</div>
+                        </div>
+                    </div>
+                    </div>
+                    <div class="row">
+                    <div class="text-center col-12 col-sm-12 col-md-12 col-lg-12">
+                        <input type="button" id="login-button" class="btn mb-3" value="Sign In">
+                        <p class="mb-4">
+							<a href="#" id="RecoverPassword">Forgot your password?</a> &nbsp; | &nbsp;
+							<a href="@Url.Action("Registration", "Authentication")" id="customer_register_link">Create account</a>
+                        </p>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+        
+</div>
+<!--End Body Content-->
+
+@section Scripts {
+<script>
+$('#login-button').on('click', () => {
+    let data = {
+        Login: $('#CustomerEmail').val(),
+        Password: $('#CustomerPassword').val(),
+    };
+
+    let jsonData = JSON.stringify(data);
+
+    $('#login-error-container').addClass('d-none');
+    $('#password-error-container').addClass('d-none');
+    $('#global-login-error').addClass('d-none');
+
+    $.ajax({
+        url: '@Url.Action("LoginAjax", "Authentication")',
+        method: 'post',
+        data: jsonData,
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        success: (response) => {
+            location.href = response.redirectUrl;
+        },
+        error: (response) => {
+            console.log(response);
+            let responseJSON = JSON.parse(response.responseText);
+
+            if (responseJSON.hasOwnProperty("Login")) {
+                $('#login-error-container').removeClass('d-none');
+                document.getElementById('login-error-container').innerHTML = responseJSON.Login;
+            }
+
+            if (responseJSON.hasOwnProperty("Password")) {
+                $('#password-error-container').removeClass('d-none');
+                document.getElementById('password-error-container').innerHTML = responseJSON.Password;
+            }
+
+            if (responseJSON.hasOwnProperty("errorMessage")) {
+                $('#global-login-error').removeClass('d-none');
+                document.getElementById('global-login-error').innerHTML = responseJSON.errorMessage;
+            }
+        },
+    })
+});
+</script>
+}

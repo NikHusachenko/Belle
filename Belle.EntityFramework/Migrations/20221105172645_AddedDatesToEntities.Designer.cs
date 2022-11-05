@@ -4,6 +4,7 @@ using Belle.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Belle.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221105172645_AddedDatesToEntities")]
+    partial class AddedDatesToEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,11 +85,6 @@ namespace Belle.EntityFramework.Migrations
                     b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(63)
-                        .HasColumnType("nvarchar(63)");
-
                     b.Property<string>("Login")
                         .IsRequired()
                         .HasMaxLength(63)
@@ -115,8 +112,7 @@ namespace Belle.EntityFramework.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedOn = new DateTime(2022, 11, 5, 22, 48, 3, 357, DateTimeKind.Local).AddTicks(1090),
-                            Email = "vadimEmail@gmail.com",
+                            CreatedOn = new DateTime(2022, 11, 5, 19, 26, 45, 630, DateTimeKind.Local).AddTicks(3124),
                             Login = "Vadim",
                             Password = "1111",
                             Type = 0,
@@ -125,8 +121,7 @@ namespace Belle.EntityFramework.Migrations
                         new
                         {
                             Id = 2L,
-                            CreatedOn = new DateTime(2022, 11, 5, 22, 48, 3, 357, DateTimeKind.Local).AddTicks(1125),
-                            Email = "vasiaEmail@gmail.com",
+                            CreatedOn = new DateTime(2022, 11, 5, 19, 26, 45, 630, DateTimeKind.Local).AddTicks(3163),
                             Login = "Vasia123",
                             Password = "1111",
                             Type = 1,
@@ -135,8 +130,7 @@ namespace Belle.EntityFramework.Migrations
                         new
                         {
                             Id = 3L,
-                            CreatedOn = new DateTime(2022, 11, 5, 22, 48, 3, 357, DateTimeKind.Local).AddTicks(1128),
-                            Email = "petya.super.email@gmail.com",
+                            CreatedOn = new DateTime(2022, 11, 5, 19, 26, 45, 630, DateTimeKind.Local).AddTicks(3166),
                             Login = "Petya13",
                             Password = "1111",
                             Type = 1,

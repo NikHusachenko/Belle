@@ -1,0 +1,100 @@
+﻿<div id="page-content">
+    <!--Page Title-->
+    <div class="page section-header text-center">
+		<div class="page-title">
+        	<div class="wrapper"><h1 class="page-width">Create an Account</h1></div>
+            <div id="global-registration-error" class="alert alert-danger d-none">Global error</div>
+      	</div>
+	</div>
+    <!--End Page Title-->
+        
+    <div class="container">
+        <div class="row">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-6 main-col offset-md-3">
+                <div class="mb-4">
+                    <div class="row">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label for="Login">Login</label>
+                                <input type="text" placeholder="" id="Login" autocomplete="off">
+                                <div id="login-error-container" class="alert alert-danger d-none">Login error</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label for="CustomerEmail">Email</label>
+                                <input type="email" id="CustomerEmail" class="">
+                                <div id="email-error-container" class="alert alert-danger d-none">Email error</div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                            <div class="form-group">
+                                <label for="CustomerPassword">Password</label>
+                                <input type="password" id="CustomerPassword" class="">    
+                                <div id="password-error-container" class="alert alert-danger d-none">Password error</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="text-center col-12 col-sm-12 col-md-12 col-lg-12">
+                            <input type="button" class="btn mb-3" value="Create" id="registration-button">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+$('#registration-button').on('click', () => {
+    let data = {
+        Login: $('#Login').val(),
+        Email: $('#CustomerEmail').val(),
+        Password: $('#CustomerPassword').val(),
+    }
+
+    let jsonData = JSON.stringify(data);
+
+    $('#login-error-container').addClass('d-none');
+    $('#email-error-container').addClass('d-none');
+    $('#password-error-container').addClass('d-none');
+    $('#global-registration-error').addClass('d-none');
+
+    $.ajax({
+        url: '@Url.Action("RegistrationAjax", "Authentication")',
+        method: 'post',
+        data: jsonData,
+        dataType: 'json',
+        contentType: 'application/json; charset=utf-8',
+        success: (response) => {
+            location.href = response.redirectUrl;
+        },
+        error: (response) => {
+            let responseJson = JSON.parse(response.responseText);
+
+            if (responseJson.hasOwnProperty("Login")) {
+                $('#login-error-container').removeClass('d-none');
+                document.getElementById('login-error-container').innerHTML = responseJson.Login;
+            }
+
+            if (responseJson.hasOwnProperty("Email")) {
+                $('#email-error-container').removeClass('d-none');
+                document.getElementById('email-error-container').innerHTML = responseJson.Email;
+            }
+
+            if (responseJson.hasOwnProperty("Password")) {
+                $('#password-error-container').removeClass('d-none');
+                document.getElementById('password-error-container').innerHTML = responseJson.Password;
+            }
+
+            if (responseJson.hasOwnProperty("responseMessage")) {
+                $('#global-registration-error').removeClass('d-none');
+                document.getElementById('global-registration-error').innerHTML = responseJson.responseMessage;
+            }
+        }
+    })
+});
+</script>
+}

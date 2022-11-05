@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Belle.Services\Belle.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Home\" />
+  </ItemGroup>
+
 </Project>

@@ -1,47 +1,68 @@
 ﻿using Belle.EntityFramework;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Belle.Services.GenericRepository
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        private readonly ApplicationDbContext _context;
-        private readonly DbSet<T> _table;
+        protected readonly ApplicationDbContext _dbContext;
 
-        public Repository(ApplicationDbContext context)
+        public Repository(ApplicationDbContext dbContext)
         {
-            _context = context;
-            _table = _context.Set<T>();
+            _dbContext = dbContext;
         }
 
-        public IEnumerable<T> Get()
+        public IQueryable<T> Entities => _dbContext.Set<T>();
+
+        public async Task Add(T entity)
         {
-            return _table.AsNoTracking().ToList();
+            await _dbContext.AddAsync(entity);
         }
 
-        public IEnumerable<T> Get(Func<T, bool> predicate)
+        public async Task AddRange(IEnumerable<T> entities)
         {
-            return _table.AsNoTracking().Where(predicate).ToList();
-        }
-        public T FindById(int id)
-        {
-            return _table.Find(id);
+            await _dbContext.AddRangeAsync(entities);
         }
 
-        public void Create(T item)
+        public virtual void Update(T entity)
         {
-            _table.Add(item);
-            _context.SaveChanges();
+            _dbContext.Update(entity);
         }
-        public void Update(T item)
+
+        public virtual IEnumerable<T> Find(Expression<Func<T, bool>> expression)
         {
-            _context.Entry(item).State = EntityState.Modified;
-            _context.SaveChanges();
+            return _dbContext.Set<T>().Where(expression);
         }
-        public void Remove(T item)
+
+        public async Task<IEnumerable<T>> GetAll()
         {
-            _table.Remove(item);
-            _context.SaveChanges();
+            return await _dbContext.Set<T>().ToListAsync();
+        }
+
+        public async virtual Task<T> GetById(int id)
+        {
+            return await _dbContext.Set<T>().FindAsync(id);
+        }
+
+        public virtual void Remove(T entity)
+        {
+            _dbContext.Remove(entity);
+        }
+
+        public virtual void RemoveRange(IEnumerable<T> entities)
+        {
+            _dbContext.RemoveRange(entities);
+        }
+
+        public async Task SaveChanges()
+        {
+            await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<T> Get(Expression<Func<T, bool>> expression)
+        {
+            return await Entities.FirstOrDefaultAsync(expression);
         }
     }
 }
