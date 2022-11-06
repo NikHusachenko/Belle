@@ -1,4 +1,6 @@
-﻿using Belle.Services.ProductServices;
+﻿using Belle.Database.Entities;
+using Belle.Database.Enums;
+using Belle.Services.ProductServices;
 using Belle.Services.ProductServices.Models;
 using Belle.Web.Models.Product;
 using Microsoft.AspNetCore.Mvc;
@@ -57,6 +59,17 @@ namespace Belle.Web.Controllers
                 Name = response.Value.Name,
                 Price = response.Value.Price,
                 Size = response.Value.Size,
+            };
+
+            return View(vm);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Listview(ProductCategory? category = null)
+        {
+            ListviewHttpGetVm vm = new ListviewHttpGetVm()
+            {
+                Products = await _productService.GetByCategory(category),
             };
 
             return View(vm);

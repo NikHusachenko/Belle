@@ -1,4 +1,5 @@
 ﻿using Belle.Database.Entities;
+using Belle.Database.Enums;
 using Belle.Services.GenericRepository;
 using Belle.Services.ProductServices.Models;
 using Belle.Services.Response;
@@ -87,6 +88,20 @@ namespace Belle.Services.ProductServices
                 _logger.LogError($"ProductService -> Create exception: {ex.Message}");
                 return ServiceResponse<ProductEntity>.Error(ex.Message);
             }
+        }
+
+        public async Task<List<ProductEntity>> GetByCategory(ProductCategory? category)
+        {
+            IQueryable<ProductEntity> query = _repository.Entities
+                .Where(prod => !prod.DeletedOn.HasValue &&
+                    prod.UserEntity == null);
+
+            if (!category.HasValue)
+            {
+                return await query.ToListAsync();
+            }
+
+            return await query.Where(prod => prod.Category == category).ToListAsync();
         }
 
         public async Task<ServiceResponse<ProductEntity>> GetById(long id)

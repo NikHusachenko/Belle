@@ -1,0 +1,90 @@
+﻿@using Belle.Database.Enums
+@using Belle.Web.Models.Product
+@model ListviewHttpGetVm
+
+@using Belle.Services.CurrentUser
+@inject ICurrentUserContext currentUser
+
+<!--Body Content-->
+<div id="page-content">
+    <!--Collection Banner-->
+    <div class="collection-header">
+		<div class="collection-hero">
+        	<div class="collection-hero__image"><img data-src="~/images/cat-women3.jpg" src="~/images/cat-women3.jpg" alt="Women" title="Women" /></div>
+        	<div class="collection-hero__title-wrapper"><h1 class="collection-hero__title page-width">Shop List View</h1></div>
+      	</div>
+	</div>
+    <!--End Collection Banner-->
+        
+    <div class="container">
+        <div class="row">
+            <!--Main Content-->
+            <div class="col-12 col-sm-12 col-md-12 col-lg-12">
+                <div class="productList">
+                    <br />
+                    <!--Toolbar-->
+                    <button type="button" class="btn btn-filter d-block d-md-none d-lg-none"> Product Filters</button>
+                    <div class="toolbar">
+                        <div class="filters-toolbar-wrapper">
+                            <div class="row">
+                                <div class="col-4 col-md-4 col-lg-4 text-center filters-toolbar__item filters-toolbar__item--count d-flex justify-content-center align-items-center">
+                                    <span class="filters-toolbar__product-count">Showing: 22</span>
+                                </div>
+                                <div class="col-4 col-md-4 col-lg-4 filters-toolbar__item collection-view-as d-flex justify-content-start align-items-center"></div>
+                                <div class="col-4 col-md-4 col-lg-4 text-right">
+                                    <div class="filters-toolbar__item">
+                                      	<label for="SortBy" class="hidden">Sort</label>
+                                      	<select name="SortBy" id="SortBy" class="filters-toolbar__input filters-toolbar__input--sort">
+                                            <option value="title-ascending" selected="selected">Sort</option>
+                                            <option>Size XXS - XXXL</option>
+                                            <option>Size XXXL - XXS</option>
+                                      	</select>
+                                      	<input class="collection-header__default-sort" type="hidden" value="manual">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!--End Toolbar-->
+                    <hr />
+                    @for (int i = 0; i < Model.Products.Count; i++)
+                    {
+                        <div class="list-view-items grid--view-items">
+                            <!--ListView Item-->
+                            <div class="list-product list-view-item">
+                                <div class="list-view-item__image-column">
+                                    <div class="list-view-item__image-wrapper">
+                                        <!-- Image -->
+                                        <a href="@Url.Action("Details", "Product", new { @id = Model.Products[i].Id })"><img class="list-view-item__image blur-up lazyload" src="@Model.Products[i].PathToImage" alt="image" title="product"></a>
+                                        <!-- End Image -->
+                                    </div>
+                                </div>
+                                <div class="list-view-item__title-column">
+                                    <div class="h4 grid-view-item__title"><a href="product-layout-2.html">@Model.Products[i].Name (x @Model.Products[i].Count)</a></div>
+                                    <p>@Model.Products[i].Description</p>
+                                    <!-- End Sort Description -->
+                                    <!-- Price -->
+                                    <p class="product-price grid-view-item__meta"><span class="product-price__price product-price__sale"><span class="money">@Model.Products[i].Price</span></span></p>
+                                    <p>@Html.DisplayFor(model => model.Products[i].Size)</p>
+                                    <!-- End Price -->
+                                    <form class="variants" action="#">
+                                        <a href="@Url.Action("Details", "Product", new { @id = Model.Products[i].Id })" class="btn btn--small" type="button">Details</a>
+                                        <a href="#" class="btn btn--small" type="button">Order</a>
+                                        @if (currentUser.Type == UserType.Admin)
+                                        {
+                                            <a href="#" class="btn btn--small" style="background-color: red !important" type="button">Delete</a>
+                                        }
+	                                </form>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <!--End Main Content-->
+        </div>
+    </div>
+        
+</div>
+<!--End Body Content-->
