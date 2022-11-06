@@ -1,5 +1,5 @@
 ﻿using Belle.Services.CurrentUser;
-using Belle.Services.UserService;
+using Belle.Services.UserServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Belle.Web.Views.Shared.Components.HeaderComponent
@@ -31,6 +31,7 @@ namespace Belle.Web.Views.Shared.Components.HeaderComponent
             vm.IsAuthenticated = true;
             vm.WalletBalance = result.Value.WalletBalance;
             vm.Login = result.Value.Login;
+            vm.Type = result.Value.Type;
             return View(vm);
         }
     }

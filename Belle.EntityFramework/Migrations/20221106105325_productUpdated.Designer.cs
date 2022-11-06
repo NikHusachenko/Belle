@@ -4,6 +4,7 @@ using Belle.EntityFramework;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Belle.EntityFramework.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221106105325_productUpdated")]
+    partial class productUpdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,16 +61,13 @@ namespace Belle.EntityFramework.Migrations
                         .HasMaxLength(63)
                         .HasColumnType("nvarchar(63)");
 
-                    b.Property<string>("PathToImage")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("Price")
                         .HasColumnType("float");
 
                     b.Property<int>("Size")
                         .HasColumnType("int");
 
-                    b.Property<long?>("UserFK")
+                    b.Property<long>("UserFK")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -76,6 +75,28 @@ namespace Belle.EntityFramework.Migrations
                     b.HasIndex("UserFK");
 
                     b.ToTable("Products", (string)null);
+                });
+
+            modelBuilder.Entity("Belle.Database.Entities.ProductImageEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"), 1L, 1);
+
+                    b.Property<string>("PathToImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ProductFK")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductFK");
+
+                    b.ToTable("ProductImageEntity");
                 });
 
             modelBuilder.Entity("Belle.Database.Entities.UserEntity", b =>
@@ -124,7 +145,7 @@ namespace Belle.EntityFramework.Migrations
                         new
                         {
                             Id = 1L,
-                            CreatedOn = new DateTime(2022, 11, 6, 18, 44, 58, 379, DateTimeKind.Local).AddTicks(8955),
+                            CreatedOn = new DateTime(2022, 11, 6, 12, 53, 24, 728, DateTimeKind.Local).AddTicks(6860),
                             Email = "vadimEmail@gmail.com",
                             Login = "Vadim",
                             Password = "1111",
@@ -134,7 +155,7 @@ namespace Belle.EntityFramework.Migrations
                         new
                         {
                             Id = 2L,
-                            CreatedOn = new DateTime(2022, 11, 6, 18, 44, 58, 379, DateTimeKind.Local).AddTicks(9011),
+                            CreatedOn = new DateTime(2022, 11, 6, 12, 53, 24, 728, DateTimeKind.Local).AddTicks(6892),
                             Email = "vasiaEmail@gmail.com",
                             Login = "Vasia123",
                             Password = "1111",
@@ -144,7 +165,7 @@ namespace Belle.EntityFramework.Migrations
                         new
                         {
                             Id = 3L,
-                            CreatedOn = new DateTime(2022, 11, 6, 18, 44, 58, 379, DateTimeKind.Local).AddTicks(9013),
+                            CreatedOn = new DateTime(2022, 11, 6, 12, 53, 24, 728, DateTimeKind.Local).AddTicks(6894),
                             Email = "petya.super.email@gmail.com",
                             Login = "Petya13",
                             Password = "1111",
@@ -157,9 +178,27 @@ namespace Belle.EntityFramework.Migrations
                 {
                     b.HasOne("Belle.Database.Entities.UserEntity", "UserEntity")
                         .WithMany("Products")
-                        .HasForeignKey("UserFK");
+                        .HasForeignKey("UserFK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("UserEntity");
+                });
+
+            modelBuilder.Entity("Belle.Database.Entities.ProductImageEntity", b =>
+                {
+                    b.HasOne("Belle.Database.Entities.ProductEntity", "Product")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductFK")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Belle.Database.Entities.ProductEntity", b =>
+                {
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("Belle.Database.Entities.UserEntity", b =>

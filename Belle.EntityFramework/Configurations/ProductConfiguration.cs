@@ -11,7 +11,8 @@ namespace Belle.EntityFramework.Configurations
             builder.ToTable("Products").HasKey(prod => prod.Id);
 
             builder.Property(prod => prod.Name).HasMaxLength(63);
-            builder.Property(prod => prod.Description).HasMaxLength(511);
+            builder.Property(prod => prod.Description).HasMaxLength(255);
+            builder.Property(prod => prod.Details).HasMaxLength(511);
         }
     }
 }

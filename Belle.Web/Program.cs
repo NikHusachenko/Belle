@@ -4,7 +4,9 @@ using Belle.Services.Authentication;
 using Belle.Services.Authentication.Models;
 using Belle.Services.CurrentUser;
 using Belle.Services.GenericRepository;
-using Belle.Services.UserService;
+using Belle.Services.ProductServices;
+using Belle.Services.ProductServices.Models;
+using Belle.Services.UserServices;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -48,11 +50,13 @@ services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 services.AddScoped<ICurrentUserContext, CurrentUserContext>();
 services.AddTransient<IAuthenticationService, AuthenticationService>();
 services.AddTransient<IUserService, UserService>();
+services.AddTransient<IProductService, ProductService>();
 
 services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 
 services.AddScoped<IValidator<LoginViewModel>, LoginViewModelValidator>();
 services.AddScoped<IValidator<RegistrationViewModel>, RegistrationViewModelValidator>();
+services.AddScoped<IValidator<CreateProductViewModel>, CreateProductViewModelValidator>();
 
 var app = builder.Build();
 

@@ -2,7 +2,7 @@
 using Belle.Services.Authentication.Models;
 using Belle.Services.Response;
 
-namespace Belle.Services.UserService
+namespace Belle.Services.UserServices
 {
     public interface IUserService
     {

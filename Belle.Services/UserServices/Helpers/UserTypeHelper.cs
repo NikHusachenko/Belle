@@ -1,6 +1,6 @@
 ﻿using Belle.Database.Enums;
 
-namespace Belle.Services.UserService.Helpers
+namespace Belle.Services.UserServices.Helpers
 {
     public class UserTypeHelper
     {

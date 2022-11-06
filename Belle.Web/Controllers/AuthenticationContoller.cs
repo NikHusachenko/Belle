@@ -1,6 +1,6 @@
 ﻿using Belle.Services.Authentication;
 using Belle.Services.Authentication.Models;
-using Belle.Services.UserService;
+using Belle.Services.UserServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Belle.Web.Controllers

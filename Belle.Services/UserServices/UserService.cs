@@ -6,7 +6,7 @@ using Belle.Services.Response;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Belle.Services.UserService
+namespace Belle.Services.UserServices
 {
     public class UserService : IUserService
     {

@@ -1,6 +1,6 @@
 ﻿using Belle.Common;
 using Belle.Database.Enums;
-using Belle.Services.UserService.Helpers;
+using Belle.Services.UserServices.Helpers;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Security.Claims;
