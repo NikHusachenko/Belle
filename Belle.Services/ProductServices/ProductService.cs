@@ -3,6 +3,8 @@ using Belle.Services.GenericRepository;
 using Belle.Services.ProductServices.Models;
 using Belle.Services.Response;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace Belle.Services.ProductServices
@@ -12,17 +14,20 @@ namespace Belle.Services.ProductServices
         private readonly IRepository<ProductEntity> _repository;
         private readonly ILogger<ProductService> _logger;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public ProductService(IRepository<ProductEntity> repository, 
             ILogger<ProductService> logger,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
             _logger = logger;
             _webHostEnvironment = webHostEnvironment;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ServiceResponse> Create(CreateProductViewModel vm)
+        public async Task<ServiceResponse<ProductEntity>> Create(CreateProductViewModel vm)
         {
             ProductEntity dbRecord = new ProductEntity()
             {
@@ -44,7 +49,7 @@ namespace Belle.Services.ProductServices
             catch (Exception ex)
             {
                 _logger.LogError($"ProductService -> Create exception: {ex.Message}");
-                return ServiceResponse.Error(ex.Message);
+                return ServiceResponse<ProductEntity>.Error(ex.Message);
             }
 
             string fullFileName = vm.Photo.FileName;
@@ -66,22 +71,36 @@ namespace Belle.Services.ProductServices
             catch (Exception ex)
             {
                 _logger.LogError($"ProductService -> Create exception: {ex.Message}");
-                return ServiceResponse.Error(ex.Message);
+                return ServiceResponse<ProductEntity>.Error(ex.Message);
             }
 
-            dbRecord.PathToImage = $"ProductImages\\{newFileName}";
-            
+            dbRecord.PathToImage = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host.Value}/ProductImages/{newFileName}";
+
             try
             {
                 _repository.Update(dbRecord);
                 await _repository.SaveChanges();
-                return ServiceResponse.Ok();
+                return ServiceResponse<ProductEntity>.Ok(dbRecord);
             }
             catch (Exception ex)
             {
                 _logger.LogError($"ProductService -> Create exception: {ex.Message}");
-                return ServiceResponse.Error(ex.Message);
+                return ServiceResponse<ProductEntity>.Error(ex.Message);
             }
+        }
+
+        public async Task<ServiceResponse<ProductEntity>> GetById(long id)
+        {
+            ProductEntity dbRecored = await _repository.Entities
+                .FirstOrDefaultAsync(prod => !prod.DeletedOn.HasValue &&
+                    prod.Id == id);
+
+            if (dbRecored == null)
+            {
+                return ServiceResponse<ProductEntity>.Error("Product with such id not found");
+            }
+
+            return ServiceResponse<ProductEntity>.Ok(dbRecored);
         }
     }
 }

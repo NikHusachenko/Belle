@@ -1,5 +1,6 @@
 ﻿using Belle.Services.ProductServices;
 using Belle.Services.ProductServices.Models;
+using Belle.Web.Models.Product;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Belle.Web.Controllers
@@ -34,9 +35,31 @@ namespace Belle.Web.Controllers
                 return BadRequest(new { responseMessage = response.ErrorMessage });
             }
 
-            // TODO
-            // Change to Url.Action("Details", "Product", new { @id = response.Value.Id });
-            return Ok(new { redirectUrl = Url.Action("Index", "Home") });
+            return Ok(new { redirectUrl = Url.Action("Details", "Product", new { @id = response.Value.Id }) });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(long id)
+        {
+            var response = await _productService.GetById(id);
+            if (response.IsError)
+            {
+                return Redirect(Url.Action("UserFriendlyError", "Home", new { errorMessage = response.ErrorMessage }));
+            }
+
+            ProductDetailsHttpGetVm vm = new ProductDetailsHttpGetVm()
+            {
+                Category = response.Value.Category,
+                Count = response.Value.Count,
+                Description = response.Value.Description,
+                Details = response.Value.Details,
+                PathToPhoto = response.Value.PathToImage,
+                Name = response.Value.Name,
+                Price = response.Value.Price,
+                Size = response.Value.Size,
+            };
+
+            return View(vm);
         }
     }
 }

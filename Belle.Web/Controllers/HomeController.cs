@@ -28,5 +28,11 @@ namespace Belle.Web.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpGet]
+        public async Task<IActionResult> UserFriendlyError([FromQuery]string errorMessage)
+        {
+            return View("UserFriendlyError", errorMessage);
+        }
     }
 }
