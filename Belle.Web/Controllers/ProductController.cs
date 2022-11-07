@@ -96,5 +96,28 @@ namespace Belle.Web.Controllers
             };
             return View(vm);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(long id)
+        {
+            var response = await _productService.Delete(id);
+            if (response.IsError)
+            {
+                return Redirect(Url.Action("UserFriendlyError", "Home", new { errorMessage = response.ErrorMessage }));
+            }
+            return RedirectToAction("Listview", "Product");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RemoveFromCart(long id)
+        {
+            var response = await _productService.RemoveFromCard(id);
+            if (response.IsError)
+            {
+                return Redirect(Url.Action("UserFriendlyError", "Home", new { errorMessage = response.ErrorMessage }));
+            }
+
+            return RedirectToAction("Buyed", "Product");
+        }
     }
 }

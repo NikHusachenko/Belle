@@ -1,8 +1,13 @@
-﻿namespace Belle.Database.Enums
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Belle.Database.Enums
 {
     public enum UserType
     {
-        Admin,
-        Client,
+        [Display(Name = "Admin")]
+        Admin = 1,
+
+        [Display(Name = "Client")]
+        Client = 2,
     }
 }

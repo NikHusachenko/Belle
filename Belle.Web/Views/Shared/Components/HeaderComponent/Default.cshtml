@@ -67,7 +67,7 @@
                                 </li>
 						        <li><a href="@Url.Action("Listview", "Product", new { @category = ProductCategory.SportsFood })" class="site-nav">Sports food</a></li>
                                 <li><a href="@Url.Action("Listview", "Product", new { @category = ProductCategory.SportEquipment })" class="site-nav">Sport equipment</a></li>
-                                @if (Model.Type == UserType.Admin)
+                                @if (Model.IsAuthenticated && Model.Type == UserType.Admin)
                                 {
                                     <li><a href="@Url.Action("Create", "Product")" class="site-nav"> + Add product</a></li>
                                     <li><a href="@Url.Action("Buyed", "Product")" class="site-nav"> + Buyed</a></li>

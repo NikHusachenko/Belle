@@ -10,6 +10,8 @@ namespace Belle.Services.ProductServices
         Task<ServiceResponse<ProductEntity>> Create(CreateProductViewModel vm);
         Task<ServiceResponse> Order(long id);
         Task<ServiceResponse> Update(ProductEntity productEntity);
+        Task<ServiceResponse> Delete(long id);
+        Task<ServiceResponse> RemoveFromCard(long id);
 
         Task<ServiceResponse<ProductEntity>> GetById(long id);
         Task<List<ProductEntity>> GetByCategory(ProductCategory? category);

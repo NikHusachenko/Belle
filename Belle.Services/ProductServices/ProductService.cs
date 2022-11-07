@@ -14,18 +14,21 @@ namespace Belle.Services.ProductServices
     public class ProductService : IProductService
     {
         private readonly IRepository<ProductEntity> _repository;
+        private readonly IRepository<UserEntity> _userRepository;
         private readonly ILogger<ProductService> _logger;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ICurrentUserContext _currentUserContext;
 
         public ProductService(IRepository<ProductEntity> repository, 
+            IRepository<UserEntity> userRepository,
             ILogger<ProductService> logger,
             IWebHostEnvironment webHostEnvironment,
             IHttpContextAccessor httpContextAccessor,
             ICurrentUserContext currentUserContext)
         {
             _repository = repository;
+            _userRepository = userRepository;
             _logger = logger;
             _webHostEnvironment = webHostEnvironment;
             _httpContextAccessor = httpContextAccessor;
@@ -94,6 +97,29 @@ namespace Belle.Services.ProductServices
             }
         }
 
+        public async Task<ServiceResponse> Delete(long id)
+        {
+            ProductEntity dbRecord = await _repository.Entities
+                .FirstOrDefaultAsync(prod => prod.Id == id);
+
+            if (dbRecord == null)
+            {
+                return ServiceResponse.Error("Product with such id not found");
+            }
+
+            try
+            {
+                _repository.Remove(dbRecord);
+                await _repository.SaveChanges();
+                return ServiceResponse.Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ProductService -> Delete exception: {ex.Message}");
+                return ServiceResponse.Error(ex.Message);
+            }
+        }
+
         public async Task<List<ProductEntity>> GetBuyed()
         {
             List<ProductEntity> products = await _repository.Entities
@@ -153,19 +179,57 @@ namespace Belle.Services.ProductServices
                 return ServiceResponse.Error("Product with such id not found");
             }
 
+            UserEntity userRecord = await _userRepository.Entities
+                .FirstOrDefaultAsync(user => user.Id == _currentUserContext.Id);
+            if (userRecord == null)
+            {
+                return ServiceResponse.Error("User with such id not found");
+            }
+
+            if (dbRecord.Price > userRecord.WalletBalance)
+            {
+                return ServiceResponse.Error("Insufficient funds");
+            }
+
+            userRecord.WalletBalance -= dbRecord.Price;
             dbRecord.UserFK = _currentUserContext.Id;
 
             try
             {
                 _repository.Update(dbRecord);
                 await _repository.SaveChanges();
-                return ServiceResponse.Ok();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"ProductService -> public Order exception: {ex.Message}");
                 return ServiceResponse.Error(ex.Message);
             }
+
+            try
+            {
+                _userRepository.Update(userRecord);
+                await _userRepository.SaveChanges();
+                return ServiceResponse.Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ProductService -> Order exception: {ex.Message}");
+                return ServiceResponse.Error(ex.Message);
+            }
+        }
+
+        public async Task<ServiceResponse> RemoveFromCard(long id)
+        {
+            ProductEntity dbRecord = await _repository.Entities
+                .FirstOrDefaultAsync(prod => prod.Id == id);
+
+            if (dbRecord == null)
+            {
+                return ServiceResponse.Error("Product with such id not found");
+            }
+
+            dbRecord.UserFK = null;
+            return await Update(dbRecord);
         }
 
         public async Task<ServiceResponse> Update(ProductEntity productEntity)

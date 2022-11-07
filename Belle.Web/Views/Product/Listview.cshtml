@@ -28,7 +28,7 @@
                         <div class="filters-toolbar-wrapper">
                             <div class="row">
                                 <div class="col-4 col-md-4 col-lg-4 text-center filters-toolbar__item filters-toolbar__item--count d-flex justify-content-center align-items-center">
-                                    <span class="filters-toolbar__product-count">Showing: 22</span>
+                                    <span class="filters-toolbar__product-count">Showing: @Model.Products.Count</span>
                                 </div>
                                 <div class="col-4 col-md-4 col-lg-4 filters-toolbar__item collection-view-as d-flex justify-content-start align-items-center"></div>
                                 <div class="col-4 col-md-4 col-lg-4 text-right">
@@ -76,7 +76,7 @@
                                         }
                                         @if (currentUser.Type == UserType.Admin)
                                         {
-                                            <a href="#" class="btn btn--small" style="background-color: red !important" type="button">Delete</a>
+                                            <a href="@Url.Action("Delete", "Product", new { @id = @Model.Products[i].Id })" class="btn btn--small" style="background-color: red !important" type="button">Delete</a>
                                         }
 	                                </form>
                                 </div>

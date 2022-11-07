@@ -32,7 +32,7 @@ namespace Belle.Web.Controllers
                 return Redirect(Url.Action("UserFriendlyError", "Home", new { errorMessage = response.ErrorMessage }));
             }
 
-            return RedirectToAction("Card", "Account");
+            return RedirectToAction("Cart", "Account");
         }
     }
 }
