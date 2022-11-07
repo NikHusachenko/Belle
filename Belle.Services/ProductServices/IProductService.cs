@@ -8,7 +8,12 @@ namespace Belle.Services.ProductServices
     public interface IProductService
     {
         Task<ServiceResponse<ProductEntity>> Create(CreateProductViewModel vm);
+        Task<ServiceResponse> Order(long id);
+        Task<ServiceResponse> Update(ProductEntity productEntity);
+
         Task<ServiceResponse<ProductEntity>> GetById(long id);
         Task<List<ProductEntity>> GetByCategory(ProductCategory? category);
+        Task<List<ProductEntity>> GetByUserId(long id);
+        Task<List<ProductEntity>> GetBuyed();
     }
 }

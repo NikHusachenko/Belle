@@ -1,5 +1,6 @@
 ﻿using Belle.Database.Entities;
 using Belle.Database.Enums;
+using Belle.Services.CurrentUser;
 using Belle.Services.GenericRepository;
 using Belle.Services.ProductServices.Models;
 using Belle.Services.Response;
@@ -16,16 +17,19 @@ namespace Belle.Services.ProductServices
         private readonly ILogger<ProductService> _logger;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ICurrentUserContext _currentUserContext;
 
         public ProductService(IRepository<ProductEntity> repository, 
             ILogger<ProductService> logger,
             IWebHostEnvironment webHostEnvironment,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            ICurrentUserContext currentUserContext)
         {
             _repository = repository;
             _logger = logger;
             _webHostEnvironment = webHostEnvironment;
             _httpContextAccessor = httpContextAccessor;
+            _currentUserContext = currentUserContext;
         }
 
         public async Task<ServiceResponse<ProductEntity>> Create(CreateProductViewModel vm)
@@ -90,6 +94,17 @@ namespace Belle.Services.ProductServices
             }
         }
 
+        public async Task<List<ProductEntity>> GetBuyed()
+        {
+            List<ProductEntity> products = await _repository.Entities
+                .Include(prod => prod.UserEntity)
+                .Where(prod => !prod.DeletedOn.HasValue &&
+                    prod.UserFK != null)
+                .ToListAsync();
+
+            return products;
+        }
+
         public async Task<List<ProductEntity>> GetByCategory(ProductCategory? category)
         {
             IQueryable<ProductEntity> query = _repository.Entities
@@ -116,6 +131,56 @@ namespace Belle.Services.ProductServices
             }
 
             return ServiceResponse<ProductEntity>.Ok(dbRecored);
+        }
+
+        public async Task<List<ProductEntity>> GetByUserId(long id)
+        {
+            List<ProductEntity> products = await _repository.Entities
+                .Where(prod => !prod.DeletedOn.HasValue &&
+                    prod.UserFK == id)
+                .ToListAsync();
+
+            return products;
+        }
+
+        public async Task<ServiceResponse> Order(long id)
+        {
+            ProductEntity dbRecord = await _repository.Entities
+                .FirstOrDefaultAsync(prod => prod.Id == id);
+
+            if (dbRecord == null)
+            {
+                return ServiceResponse.Error("Product with such id not found");
+            }
+
+            dbRecord.UserFK = _currentUserContext.Id;
+
+            try
+            {
+                _repository.Update(dbRecord);
+                await _repository.SaveChanges();
+                return ServiceResponse.Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ProductService -> public Order exception: {ex.Message}");
+                return ServiceResponse.Error(ex.Message);
+            }
+        }
+
+        public async Task<ServiceResponse> Update(ProductEntity productEntity)
+        {
+            try
+            {
+                _repository.Update(productEntity);
+                await _repository.SaveChanges();
+                return ServiceResponse.Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"ProductService -> Update exception: {ex.Message}");
+                return ServiceResponse.Error(ex.Message);
+            }
         }
     }
 }

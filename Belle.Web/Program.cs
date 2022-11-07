@@ -1,5 +1,6 @@
 using Belle.Common;
 using Belle.EntityFramework;
+using Belle.Services.Account;
 using Belle.Services.Authentication;
 using Belle.Services.Authentication.Models;
 using Belle.Services.CurrentUser;
@@ -51,6 +52,7 @@ services.AddScoped<ICurrentUserContext, CurrentUserContext>();
 services.AddTransient<IAuthenticationService, AuthenticationService>();
 services.AddTransient<IUserService, UserService>();
 services.AddTransient<IProductService, ProductService>();
+services.AddTransient<IAccountService, AccountService>();
 
 services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 

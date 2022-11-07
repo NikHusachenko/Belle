@@ -63,6 +63,7 @@ namespace Belle.Services.UserServices
             }
 
             UserEntity dbRecord = await _repository.Entities
+                .Include(user => user.Products)
                 .FirstOrDefaultAsync(user => !user.DeletedOn.HasValue
                     && user.Id == id);
 

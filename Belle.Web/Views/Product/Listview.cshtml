@@ -10,7 +10,7 @@
     <!--Collection Banner-->
     <div class="collection-header">
 		<div class="collection-hero">
-        	<div class="collection-hero__image"><img data-src="~/images/cat-women3.jpg" src="~/images/cat-women3.jpg" alt="Women" title="Women" /></div>
+        	<div class="collection-hero__image"><img data-src="~/images/cat-women3.jpg" src="~/images/cat-women1.jpg" alt="Women" title="Women" /></div>
         	<div class="collection-hero__title-wrapper"><h1 class="collection-hero__title page-width">Shop List View</h1></div>
       	</div>
 	</div>
@@ -69,8 +69,11 @@
                                     <p>@Html.DisplayFor(model => model.Products[i].Size)</p>
                                     <!-- End Price -->
                                     <form class="variants" action="#">
-                                        <a href="@Url.Action("Details", "Product", new { @id = Model.Products[i].Id })" class="btn btn--small" type="button">Details</a>
-                                        <a href="#" class="btn btn--small" type="button">Order</a>
+                                        <a href="@Url.Action("Details", "Product", new { @id = @Model.Products[i].Id })" class="btn btn--small" type="button">Details</a>
+                                        @if (currentUser.Id.HasValue)
+                                        {
+                                            <a href="@Url.Action("Order", "Product", new { @id = @Model.Products[i].Id })" class="btn btn--small" type="button">Order</a>
+                                        }
                                         @if (currentUser.Type == UserType.Admin)
                                         {
                                             <a href="#" class="btn btn--small" style="background-color: red !important" type="button">Delete</a>

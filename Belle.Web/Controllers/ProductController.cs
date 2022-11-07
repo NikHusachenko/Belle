@@ -74,5 +74,27 @@ namespace Belle.Web.Controllers
 
             return View(vm);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Order(long id)
+        {
+            var response = await _productService.Order(id);
+            if(response.IsError)
+            {
+                return Redirect(Url.Action("UserFriendlyError", "Home", new { errorMessage = response.ErrorMessage }));
+            }
+
+            return RedirectToAction("Cart", "Account");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Buyed()
+        {
+            BuyedHttpGetVm vm = new BuyedHttpGetVm()
+            {
+                Products = await _productService.GetBuyed(),
+            };
+            return View(vm);
+        }
     }
 }

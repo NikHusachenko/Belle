@@ -70,6 +70,7 @@
                                 @if (Model.Type == UserType.Admin)
                                 {
                                     <li><a href="@Url.Action("Create", "Product")" class="site-nav"> + Add product</a></li>
+                                    <li><a href="@Url.Action("Buyed", "Product")" class="site-nav"> + Buyed</a></li>
                                 }
                             </ul>
                         </li>
@@ -87,15 +88,24 @@
                 </div>
             </div>
             <!--Mobile Logo-->
-            <div class="col-4 col-sm-3 col-md-3 col-lg-2">
-                <div class="site-cart">
-                    <a href="#;" class="site-header__cart" title="Cart">
-                        <i class="icon anm anm-bag-l"></i>
-                        <span id="CartCount" class="site-header__cart-count" data-cart-render="item_count">0</span>
-                    </a>
+            @if (Model.IsAuthenticated)
+            {
+                <div class="col-4 col-sm-3 col-md-3 col-lg-2">
+                    <div class="site-cart">
+                        <a href="@Url.Action("Cart", "Account")" class="site-header__cart" title="Cart">
+                            <i id="cart-icon" class="icon anm anm-bag-l"></i>
+                            <span id="CartCount" class="site-header__cart-count" data-cart-render="item_count">@Model.CartCount</span>
+                        </a>
+                    </div>
                 </div>
-                
-            </div>
+            }
         </div>
     </div>
 </div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+$('#cart-icon').on('click', () => {
+    location.href = '@Url.Action("Cart", "Account")';
+});
+</script>

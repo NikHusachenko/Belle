@@ -32,6 +32,8 @@ namespace Belle.Web.Views.Shared.Components.HeaderComponent
             vm.WalletBalance = result.Value.WalletBalance;
             vm.Login = result.Value.Login;
             vm.Type = result.Value.Type;
+            vm.CartCount = result.Value.Products.Count;
+
             return View(vm);
         }
     }
